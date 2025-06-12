@@ -1,0 +1,27 @@
+{
+    "name": "diw/ai-faq",
+    "description": "Create automated FAQ for Products",
+    "type": "shopware-platform-plugin",
+    "version": "1.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0"
+    },
+    "extra": {
+        "shopware-plugin-class": "DIW\\AiFaq\\AiFaq",
+        "label": {
+            "de-DE": "AI FAQ",
+            "en-GB": "AI FAQ"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "DIW\\AiFaq\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DIW\\AiFaq\\Tests\\": "tests/"
+        }
+    }
+}
