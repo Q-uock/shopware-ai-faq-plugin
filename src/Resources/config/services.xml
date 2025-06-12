@@ -10,8 +10,12 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="DIW\AiFaq\Core\Content\Questionsanswers\QuestionsanswersDefinition">
-            <tag name="shopware.entity.definition" entity="questionsanswers" />
+        <service id="DIW\AiFaq\Core\Content\Question\QuestionDefinition">
+            <tag name="shopware.entity.definition" entity="faq_question" />
+        </service>
+
+        <service id="DIW\AiFaq\Core\Content\Answer\AnswerDefinition">
+            <tag name="shopware.entity.definition" entity="faq_answer" />
         </service>
 
     </services>

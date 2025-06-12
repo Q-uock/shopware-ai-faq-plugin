@@ -7,10 +7,18 @@
         <title>Minimal configuration</title>
 
         <input-field type="text">
-            <name>textField</name>
-            <label>Test field with default value</label>
-            <defaultValue>test</defaultValue>
+            <name>Prompt for FAQ Generation</name>
+            <label>Prompt</label>
+            <defaultValue>Generate me 5 FAQ Questions with Answers for this Product</defaultValue>
         </input-field>
+    </card>
+
+    <card>
+        <title>Activate Plugin</title>
+        <bool>
+            <name>Activate Plugin</name>
+            <defaultValue>false</defaultValue>
+        </bool>
     </card>
 
 </config>
