@@ -3,6 +3,7 @@
 namespace DIW\AiFaq\Core\Content\Question;
 
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\ApiAware;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
@@ -34,7 +35,7 @@ class QuestionDefinition extends EntityDefinition
     protected function defineFields(): FieldCollection
     {
         return new FieldCollection([
-            (new IdField('id', 'id'))->addFlags(new Required(), new ApiAware()),
+            (new IdField('id', 'id'))->addFlags(new Required(), new ApiAware(), new PrimaryKey()),
             (new StringField('question', 'question'))->addFlags(new Required(), new ApiAware()),
             (new BoolField('active', 'active'))->addFlags(new ApiAware()),
             new CreatedAtField(),

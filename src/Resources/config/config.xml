@@ -4,21 +4,23 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
 
     <card>
-        <title>Minimal configuration</title>
+        <title>FAQ Generator</title>
 
         <input-field type="text">
-            <name>Prompt for FAQ Generation</name>
-            <label>Prompt</label>
-            <defaultValue>Generate me 5 FAQ Questions with Answers for this Product</defaultValue>
+            <name>FaqPrompt</name>
+            <label>Prompt für KI</label>
+            <helpText>Generate me 5 FAQ Questions with Answers for this Product</helpText>
         </input-field>
     </card>
 
     <card>
-        <title>Activate Plugin</title>
-        <bool>
-            <name>Activate Plugin</name>
-            <defaultValue>false</defaultValue>
-        </bool>
+        <title>AI - Access</title>
+
+        <input-field type="text">
+            <name>FaqToken</name>
+            <label>Token</label>
+            <helpText>Your secret AI-Token</helpText>
+        </input-field>
     </card>
 
 </config>
