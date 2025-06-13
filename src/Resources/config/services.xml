@@ -18,5 +18,12 @@
             <tag name="shopware.entity.definition" entity="faq_answer" />
         </service>
 
+        <service id="DIW\AiFaq\Subscriber\ProductSubscriber">
+            <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="product.repository"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="monolog.logger"/>
+            <argument type="service" id="http_client"/>
+        </service>
     </services>
 </container>

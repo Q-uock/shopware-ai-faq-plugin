@@ -4,23 +4,23 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
 
     <card>
-        <title>FAQ Generator</title>
+        <title>Ollama - Config</title>
 
         <input-field type="text">
             <name>FaqPrompt</name>
             <label>Prompt für KI</label>
-            <helpText>Generate me 5 FAQ Questions with Answers for this Product</helpText>
+            <defaultValue>Generate 5 FAQs with answers about the following product: {name}, description: {description}</defaultValue>
         </input-field>
-    </card>
-
-    <card>
-        <title>AI - Access</title>
 
         <input-field type="text">
-            <name>FaqToken</name>
-            <label>Token</label>
-            <helpText>Your secret AI-Token</helpText>
+            <name>FaqUrl</name>
+            <label>Url</label>
+        </input-field>
+
+        <input-field type="text">
+            <name>FaqModel</name>
+            <label>Model</label>
+            <defaultValue>llama3</defaultValue>
         </input-field>
     </card>
-
 </config>
