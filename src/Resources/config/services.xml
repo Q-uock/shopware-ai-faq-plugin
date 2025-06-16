@@ -24,6 +24,16 @@
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <argument type="service" id="monolog.logger"/>
             <argument type="service" id="http_client"/>
+            <argument type="service" id="messenger.default_bus"/>
+        </service>
+
+        <service id="DIW\AiFaq\Handler\GenerateFaqHandler">
+        <tag name="messenger.message_handler" />
+            <argument type="service" id="product.repository"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="http_client"/>
+            <argument type="service" id="monolog.logger"/>
+            <argument type="service" id="messenger.default_bus"/>
         </service>
     </services>
 </container>
