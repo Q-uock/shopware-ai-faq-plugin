@@ -19,9 +19,10 @@ use DIW\AiFaq\Core\Content\Answer\AnswerDefinition;
 
 class QuestionDefinition extends EntityDefinition
 {
+    public const ENTITY_NAME = 'faq_question';
     public function getEntityName(): string
     {
-        return 'faq_question';
+        return self::ENTITY_NAME;
     }
 
     public function getEntityClass(): string

@@ -35,5 +35,10 @@
             <argument type="service" id="monolog.logger"/>
             <argument type="service" id="messenger.default_bus"/>
         </service>
+
+        <service class="DIW\AiFaq\Extension\ProductExtension" id="diw.ai_faq.extension.product_extension">
+            <tag name="shopware.entity.extension"/>
+        </service>
+
     </services>
 </container>
