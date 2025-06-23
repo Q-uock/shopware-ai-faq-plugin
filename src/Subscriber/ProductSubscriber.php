@@ -22,10 +22,7 @@ class ProductSubscriber implements EventSubscriberInterface
 {
 
     public function __construct(
-        private readonly EntityRepository $productRepository,
-        private readonly SystemConfigService $systemConfigService,
         private readonly LoggerInterface $logger,
-        private readonly HttpClientInterface $httpClient,
         private readonly MessageBusInterface $messageBus,
     )
     {

@@ -55,6 +55,8 @@ class GenerateFaqHandler
             );
 
 
+
+
             try {
                 $response = $this->httpClient->request('POST', $url, [
                     'json' => [
@@ -64,17 +66,24 @@ class GenerateFaqHandler
                     ],
                 ]);
 
+                $re = '`\`\`\`(?<result>.*)\`\`\``';
+                $matches = [];
+                preg_match($re, $response->getContent(), $matches);
                 $data = $response->toArray();
                 $faqData = $data['response'] ?? null;
                 $this->logger->info('Generated FAQ for product ' . $product->getId() . ': ' . $faqData);
 
-                if ($product->getExtension('custom_product_faq_disabled') === 1 || $faqData === null) {
+               $cleanResponse =str_replace(['\n', '\"'], ['', '"'], $matches['result']);
+
+                $resultFaq = json_decode($cleanResponse, true);
+
+                if ($product->getExtension('custom_product_faq_disabled') === 1 || $resultFaq === null) {
                     continue;
                 }
 
 
                 $faqTexts = [];
-                foreach($faqData as $faqText){
+                foreach($resultFaq as $faqText){
                     $faqTexts[]=  [
                         [
                             'id' => Uuid::fromStringToHex($faqText['question']),
@@ -92,7 +101,6 @@ class GenerateFaqHandler
                     'id'=> $product->getId(),
                     'questions'=>$faqTexts
                 ];
-
                 $upsertData[]=$data;
 
 
