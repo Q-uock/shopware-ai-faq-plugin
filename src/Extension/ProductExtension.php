@@ -13,7 +13,7 @@ class ProductExtension extends EntityExtension
     public function extendFields(FieldCollection $collection): void
     {
         $collection->add(
-            new OneToManyAssociationField('faqQuestions', QuestionDefinition::class, 'product_id', 'id'
+            new OneToManyAssociationField('questions', QuestionDefinition::class, 'product_id', 'id'
             )
         );
     }

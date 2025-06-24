@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DIW\AiFaq\Handler;
 
@@ -25,7 +27,8 @@ class GenerateFaqHandler
         private readonly SystemConfigService $systemConfigService,
         private readonly HttpClientInterface $httpClient,
         private readonly LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public function __invoke(GenerateFaqMessage $message): void
     {
@@ -55,8 +58,6 @@ class GenerateFaqHandler
             );
 
 
-
-
             try {
                 $response = $this->httpClient->request('POST', $url, [
                     'json' => [
@@ -73,7 +74,7 @@ class GenerateFaqHandler
                 $faqData = $data['response'] ?? null;
                 $this->logger->info('Generated FAQ for product ' . $product->getId() . ': ' . $faqData);
 
-               $cleanResponse =str_replace(['\n', '\"'], ['', '"'], $matches['result']);
+                $cleanResponse = str_replace(['\n', '\"'], ['', '"'], $matches['result']);
 
                 $resultFaq = json_decode($cleanResponse, true);
 
@@ -81,32 +82,31 @@ class GenerateFaqHandler
                     continue;
                 }
 
-
                 $faqTexts = [];
-                foreach($resultFaq as $faqText){
-                    $faqTexts[]=  [
-                        [
-                            'id' => Uuid::fromStringToHex($faqText['question']),
-                            'question'=>$faqText,
-                            'createdAt'=>date('Y-m-d H:i:s'),
-                            'answer'=>[
+                foreach ($resultFaq as $faqText) {
+                    $questionId = Uuid::fromStringToHex($faqText['question']);
+                    $faqTexts[] = [
+                        'id' => $questionId,
+                        'productId' => $product->getId(),
+                        'question' => $faqText['question'],
+                        'answers' => [
+                            [
                                 'id' => Uuid::fromStringToHex($faqText['answer']),
-                                'answer'=>$faqText['answer'],
-                                'createdAt'=>date('Y-m-d H:i:s'),
-                            ]
-                        ]
+                                'questionId' => $questionId,
+                                'answer' => $faqText['answer'],
+                            ],
+                        ],
                     ];
                 }
                 $data = [
-                    'id'=> $product->getId(),
-                    'questions'=>$faqTexts
+                    'id' => $product->getId(),
+                    'questions' => $faqTexts
                 ];
-                $upsertData[]=$data;
-
-
-
+                $upsertData[] = $data;
             } catch (\Throwable $e) {
-                $this->logger->error('AI FAQ Generation failed for product ' . $product->getId() . ': ' . $e->getMessage());
+                $this->logger->error(
+                    'AI FAQ Generation failed for product ' . $product->getId() . ': ' . $e->getMessage()
+                );
             }
         }
         /*
