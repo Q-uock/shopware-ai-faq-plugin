@@ -3,20 +3,12 @@
 namespace DIW\AiFaq\Subscriber;
 
 use DIW\AiFaq\Messages\GenerateFaqMessage;
-use Shopware\Core\Content\Product\ProductCollection;
-use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Content\Product\ProductEvents;
 use Shopware\Core\Defaults;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenEvent;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ProductSubscriber implements EventSubscriberInterface
 {
@@ -38,6 +30,10 @@ class ProductSubscriber implements EventSubscriberInterface
     public function onProductWritten(EntityWrittenEvent $event): void
     {
         $this->logger->info('onProductWritten wurde aufgerufen!');
+
+        if ($event->getContext()->hasExtension('ai_faq_generation')) {
+            return;             // Ignore writes coming from the handler
+        }
 
         // Ignoriere Nicht-Live-Versionen
         if ($event->getContext()->getVersionId() !== Defaults::LIVE_VERSION) {
