@@ -4,7 +4,7 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
 
     <card>
-        <title>Ollama - Config</title>
+        <title>Deepseek (OpenRouter) - Config</title>
 
         <input-field type="text">
             <name>FaqPrompt</name>
@@ -14,13 +14,19 @@
 
         <input-field type="text">
             <name>FaqUrl</name>
-            <label>Url</label>
+            <label>API URL</label>
+            <defaultValue>https://openrouter.ai/api/v1/chat/completions</defaultValue>
+        </input-field>
+
+        <input-field type="password">
+            <name>FaqApiKey</name>
+            <label>API Key</label>
         </input-field>
 
         <input-field type="text">
             <name>FaqModel</name>
             <label>Model</label>
-            <defaultValue>llama3</defaultValue>
+            <defaultValue>deepseek/deepseek-r1-0528:free</defaultValue>
         </input-field>
     </card>
 </config>

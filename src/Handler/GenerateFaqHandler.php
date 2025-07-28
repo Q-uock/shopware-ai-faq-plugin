@@ -53,13 +53,14 @@ class GenerateFaqHandler
         $initialPrompt = $this->systemConfigService->get('AiFaq.config.FaqPrompt');
         $url = $this->systemConfigService->get('AiFaq.config.FaqUrl');
         $model = $this->systemConfigService->get('AiFaq.config.FaqModel');
+        $apiKey = $this->systemConfigService->get('AiFaq.config.FaqApiKey');
 
         $upsertData = [];
         /** @var ProductEntity $product */
         foreach ($searchResult as $product) {
             $prompt = $initialPrompt .
-                ' Information: Product-Name: {name}, Product-Description: {description}. Give me the FAQ as a JSON Response. ' .
-                'For Example: [{"question": "question", "answer": "answer"}]';
+                ' Information: Product-Name: {name}, Product-Description: {description}. Give me the FAQ as a JSON Response. The length of the each question and answer is forbidden to succeed 200 characters ' .
+                'For Example: [{"question": "question", "answer": "answer"}].';
             //$product->getExtension('faq_question');
             $prompt = str_replace(
                 ['{name}', '{description}'],
@@ -77,21 +78,28 @@ class GenerateFaqHandler
 
             try {
                 $response = $this->httpClient->request('POST', $url, [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $apiKey,
+                        'Content-Type' => 'application/json',
+                    ],
                     'json' => [
                         'model' => $model,
-                        'prompt' => $prompt,
-                        'stream' => false,
+                        'messages' => [
+                            [
+                                'role' => 'user',
+                                'content' => $prompt,
+                            ],
+                        ],
                     ],
                 ]);
 
-                $re = '`\`\`\`(?<result>.*)\`\`\``';
-                $matches = [];
-                preg_match($re, $response->getContent(), $matches);
-                $data = $response->toArray();
-                $faqData = $data['response'] ?? null;
-                $this->logger->info('Generated FAQ for product ' . $product->getId() . ': ' . $faqData);
+                $data = $response->toArray(false);
+                $assistantContent = $data['choices'][0]['message']['content'] ?? '';
 
-                $cleanResponse = str_replace(['\n', '\"'], ['', '"'], $matches['result']);
+                // Remove markdown block if present
+                $cleanResponse = preg_replace('/```[a-zA-Z]*\n?(.*?)```/s', '$1', $assistantContent);
+                $cleanResponse = str_replace(['\n', '\"'], ['', '"'], $cleanResponse);
+                $this->logger->info('Generated FAQ for product ' . $product->getId() . ': ' . $cleanResponse);
 
                 $resultFaq = json_decode($cleanResponse, true);
 
@@ -102,6 +110,7 @@ class GenerateFaqHandler
                 $faqTexts = [];
                 foreach ($resultFaq as $faqText) {
                     $questionId = Uuid::fromStringToHex($faqText['question']);
+                    $this->logger->info('questionId: ' . $questionId);
                     $faqTexts[] = [
                         'id' => $questionId,
                         'productId' => $product->getId(),
