@@ -24,13 +24,18 @@
             <argument type="service" id="messenger.default_bus"/>
         </service>
 
+        <!-- New service classes -->
+        <service id="DIW\AiFaq\Service\PromptBuilderService" autowire="true" autoconfigure="true" />
+        <service id="DIW\AiFaq\Service\AiClientService" autowire="true" autoconfigure="true" />
+        <service id="DIW\AiFaq\Service\FaqPersistenceService" autowire="true" autoconfigure="true" />
+
+        <!-- Coordinator service -->
+        <service id="DIW\AiFaq\Service\FaqGeneratorService" autowire="true" autoconfigure="true" />
+
+        <!-- Handler now receives FaqGenerator instead of messenger bus -->
         <service id="DIW\AiFaq\Handler\GenerateFaqHandler">
-        <tag name="messenger.message_handler" />
-            <argument type="service" id="product.repository"/>
-            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
-            <argument type="service" id="http_client"/>
-            <argument type="service" id="monolog.logger"/>
-            <argument type="service" id="messenger.default_bus"/>
+            <tag name="messenger.message_handler" />
+            <argument type="service" id="DIW\AiFaq\Service\FaqGeneratorService"/>
         </service>
 
         <service class="DIW\AiFaq\Extension\ProductExtension" id="diw.ai_faq.extension.product_extension">

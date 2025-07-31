@@ -7,6 +7,9 @@
     "require": {
         "shopware/core": "~6.6.0"
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit -c ./phpunit.xml"
+    },
     "extra": {
         "shopware-plugin-class": "DIW\\AiFaq\\AiFaq",
         "label": {
@@ -14,6 +17,7 @@
             "en-GB": "AI FAQ"
         }
     },
+
     "autoload": {
         "psr-4": {
             "DIW\\AiFaq\\": "src/"
@@ -22,6 +26,14 @@
     "autoload-dev": {
         "psr-4": {
             "DIW\\AiFaq\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/runtime": true
         }
     }
 }
