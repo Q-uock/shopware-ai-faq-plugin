@@ -51,7 +51,7 @@ class FaqGeneratorService
         foreach ($products as $product) {
             // Skip if disabled
             $customFaqFields = $product->getCustomFields();
-            if (($customFaqFields['custom_product_faq_disabled'] ?? null) === true) {
+            if (($customFaqFields['custom_product_faq_disabled'] ?? false) === true) {
                 $this->logger->info('FAQ disabled via custom field for product ' . $product->getId());
                 continue;
             }
@@ -65,7 +65,7 @@ class FaqGeneratorService
 
             $upsertData[] = $this->persistenceService->buildUpsertData($product, $faqArray);
         }
-
+        $this->logger->info("FAQ upsert payload:\n" . json_encode($upsertData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         $this->persistenceService->upsert($upsertData, $context);
 
         return $upsertData;

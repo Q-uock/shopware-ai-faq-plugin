@@ -8,12 +8,17 @@ use Shopware\Core\Framework\Plugin\Context\DeactivateContext;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Framework\Plugin\Context\UpdateContext;
+use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 
 class AiFaq extends Plugin
 {
     public function install(InstallContext $installContext): void
     {
-        // Do stuff such as creating a new payment method
+        parent::install($installContext);
+        $this->upsertFaqCustomField($installContext->getContext());
     }
 
     public function uninstall(UninstallContext $uninstallContext): void
@@ -24,7 +29,7 @@ class AiFaq extends Plugin
             return;
         }
 
-        // Remove or deactivate the data created by the plugin
+        $this->removeFaqCustomField($uninstallContext->getContext());
     }
 
     public function activate(ActivateContext $activateContext): void
@@ -41,7 +46,8 @@ class AiFaq extends Plugin
 
     public function update(UpdateContext $updateContext): void
     {
-        // Update necessary stuff, mostly non-database related
+        parent::update($updateContext);
+        $this->upsertFaqCustomField($updateContext->getContext());
     }
 
     public function postInstall(InstallContext $installContext): void
@@ -50,5 +56,54 @@ class AiFaq extends Plugin
 
     public function postUpdate(UpdateContext $updateContext): void
     {
+    }
+
+    private function upsertFaqCustomField(Context $context): void
+    {
+        /** @var EntityRepository $repo */
+        $repo = $this->container->get('custom_field_set.repository');
+
+        $repo->upsert([
+            [
+                'name' => 'faq_custom_fields',
+                'config' => [
+                    'label' => [
+                        'en-GB' => 'FAQ',
+                        'de-DE' => 'FAQ',
+                    ],
+                ],
+                'relations' => [
+                    ['entityName' => 'product'],
+                ],
+                'customFields' => [
+                    [
+                        'name'   => 'custom_product_faq_disabled',
+                        'type'   => 'bool',
+                        'config' => [
+                            'label' => [
+                                'en-GB' => 'Disable FAQ generation',
+                                'de-DE' => 'FAQ-Generierung deaktivieren',
+                            ],
+                            'componentName'   => 'sw-field',
+                            'customFieldType' => 'switch',
+                        ],
+                    ],
+                ],
+            ],
+        ], $context);
+    }
+
+    private function removeFaqCustomField(Context $context): void
+    {
+        /** @var EntityRepository $repo */
+        $repo = $this->container->get('custom_field_set.repository');
+
+        // find set id by name
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('name', 'faq_custom_fields'));
+        $setId = $repo->searchIds($criteria, $context)->firstId();
+        if ($setId) {
+            $repo->delete([['id' => $setId]], $context);
+        }
     }
 }
